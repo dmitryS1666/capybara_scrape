@@ -6,11 +6,9 @@ class ScrapeAndParse
   URL = "https://www.saucedemo.com/"
   USER_LOGIN = 'standard_user'
   USER_PSWD = 'secret_sauce'
-  version = Time.now.to_i
-  PATH = "./result/#{version}"
+  PATH = "./result/#{Time.now.to_i}"
 
   def scrape
-    puts '------start scrape'
     Capybara.register_driver :poltergeist do |app|
       Capybara::Poltergeist::Driver.new(app, {
         js_errors: false,
@@ -35,17 +33,14 @@ class ScrapeAndParse
 
       browser.click_on 'login-button'
 
-      puts '------end scrape'
       browser.all('.inventory_item')
     end
   rescue StandardError => e
     puts "e.message: #{e.message}"
-    puts e
     puts e.backtrace.join("\n")
   end
 
   def create_csv(data)
-    puts '------start csv'
     csv_rows = []
 
     dirname = create_dir(PATH)
@@ -62,10 +57,10 @@ class ScrapeAndParse
         csv << csv_row
       end
     end
-    puts "----------cols: #{csv_rows.size}"
-    puts '------end csv'
+    csv_rows.size
   end
 
+  private
   def create_dir(dir)
     FileUtils.mkdir_p(dir) unless File.directory?(dir)
     "#{dir}/"
